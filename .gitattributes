@@ -1,0 +1,6 @@
+# Force LF line endings so macOS and Windows commits do not conflict
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.joblib binary
