@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     app_env: str = "development"
 
     osrm_base_url: str = "http://127.0.0.1:5000"
+    app_base_url: str = "http://127.0.0.1:8000"  # used to build links in emails
 
     # Used only by `python -m app.seed`. Optional, so the app starts without them.
     seed_super_admin_email: str | None = None

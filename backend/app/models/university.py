@@ -10,6 +10,7 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     Numeric,
+    SmallInteger,
     String,
     text,
 )
@@ -64,7 +65,9 @@ class UniversitySettings(Base):
         Boolean, default=True, server_default=text("1")
     )
     demand_cap_percent: Mapped[int] = mapped_column(
-        TINYINT(unsigned=True), default=10, server_default=text("10")
+        SmallInteger().with_variant(TINYINT(unsigned=True), "mysql"),
+        default=10,
+        server_default=text("10"),
     )
 
     # Matching hard filters
