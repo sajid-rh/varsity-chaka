@@ -3,6 +3,7 @@
 No credentials are hardcoded here. Values come from `.env` at the repo root
 (never committed). See `.env.example` for the variable names.
 """
+from decimal import Decimal
 from functools import lru_cache
 from pathlib import Path
 from urllib.parse import quote_plus
@@ -25,6 +26,12 @@ class Settings(BaseSettings):
     app_env: str = "development"
 
     osrm_base_url: str = "http://127.0.0.1:5000"
+
+    # Used only by `python -m app.seed`. Optional, so the app starts without them.
+    seed_super_admin_email: str | None = None
+    seed_admin_password: str | None = None
+    seed_fuel_price_per_litre: Decimal | None = None
+    seed_max_rate_per_km: Decimal | None = None
 
     model_config = SettingsConfigDict(
         env_file=REPO_ROOT / ".env",
