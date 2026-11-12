@@ -10,10 +10,11 @@ from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
 from app.core.errors import AppError
-from app.core.security import hash_password
+from app.core.rate_limit import login_limiter
+from app.core.security import create_access_token, hash_password, verify_password
 from app.models import EmailVerificationToken, University, User
 from app.models.types import utcnow
-from app.schemas.auth import RegisterRequest
+from app.schemas.auth import LoginRequest, RegisterRequest
 
 TOKEN_LIFETIME_HOURS = 24
 
@@ -30,7 +31,7 @@ def send_verification_link(email: str, raw_token: str) -> None:
     """No mail server in this prototype: in development the link is printed in the server log.
     A real deployment would send this link by email."""
     settings = get_settings()
-    link = f"{settings.app_base_url}/api/v1/auth/verify-email?token={raw_token}"
+    link = f"{settings.app_base_url}/verify-email?token={raw_token}"
     if settings.app_env == "development":
         logger.info("[DEV] Verification link for %s: %s", email, link)
     else:
@@ -110,3 +111,48 @@ def verify_email(db: Session, raw_token: str) -> User:
         user.email_verified_at = now
     db.commit()
     return user
+
+
+# Hash of a throwaway password. When the email is unknown we still run one hash check
+# against it, so "no such user" and "wrong password" take about the same time.
+_DUMMY_HASH = hash_password("not-a-real-password-Zz9")
+
+GENERIC_LOGIN_ERROR = "Incorrect email or password"
+
+
+def login_user(db: Session, data: LoginRequest, client_ip: str) -> tuple[User, str]:
+    """Check credentials and return (user, access token).
+
+    Every failure about the credentials gives the same generic message, so an attacker
+    cannot tell which emails have accounts.
+    """
+    email = data.email.lower()
+    keys = [f"email:{email}", f"ip:{client_ip}"]
+
+    wait = max(login_limiter.blocked_for(key) for key in keys)
+    if wait:
+        raise AppError(
+            "too_many_attempts",
+            f"Too many failed attempts. Try again in {wait} seconds.",
+            429,
+        )
+
+    user = db.scalar(select(User).where(User.email == email))
+    password_ok = verify_password(data.password, user.password_hash if user else _DUMMY_HASH)
+
+    if user is None or not password_ok:
+        for key in keys:
+            login_limiter.register_failure(key)
+        raise AppError("invalid_credentials", GENERIC_LOGIN_ERROR, 401)
+
+    # Correct password from here on, so it is safe to explain the account state
+    if not user.is_active:
+        raise AppError("account_disabled", "This account has been disabled", 403)
+    if user.email_verified_at is None:
+        raise AppError("email_not_verified", "Verify your email before logging in", 403)
+
+    login_limiter.reset(f"email:{email}")
+    token = create_access_token(
+        user_id=user.id, university_id=user.university_id, role=user.role
+    )
+    return user, token

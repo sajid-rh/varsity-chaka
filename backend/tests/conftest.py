@@ -56,11 +56,26 @@ def client(db_session):
 
 @pytest.fixture()
 def universities(db_session):
-    """The two demo tenants: DIU (id 1) and AIUB (id 2)."""
-    from app.models import University
+    """The two demo tenants: DIU (id 1) and AIUB (id 2) with default settings."""
+    from decimal import Decimal
+    from app.models import University, UniversitySettings
 
     diu = University(name="Daffodil International University", short_code="DIU", email_domain="diu.edu.bd")
     aiub = University(name="American International University-Bangladesh", short_code="AIUB", email_domain="aiub.edu")
     db_session.add_all([diu, aiub])
     db_session.commit()
+
+    diu_settings = UniversitySettings(
+        university_id=diu.id,
+        fuel_price_per_litre=Decimal("130.00"),
+        max_rate_per_km=Decimal("15.00"),
+    )
+    aiub_settings = UniversitySettings(
+        university_id=aiub.id,
+        fuel_price_per_litre=Decimal("130.00"),
+        max_rate_per_km=Decimal("15.00"),
+    )
+    db_session.add_all([diu_settings, aiub_settings])
+    db_session.commit()
+
     return {"DIU": diu, "AIUB": aiub}

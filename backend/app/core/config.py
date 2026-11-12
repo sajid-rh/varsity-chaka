@@ -27,6 +27,9 @@ class Settings(BaseSettings):
 
     osrm_base_url: str = "http://127.0.0.1:5000"
     app_base_url: str = "http://127.0.0.1:8000"  # used to build links in emails
+    # Private folder for uploaded documents. It is never served as static files.
+    upload_dir: Path = REPO_ROOT / "backend" / "uploads"
+    cookie_secure: bool = False  # set COOKIE_SECURE=true when the site is served over HTTPS
 
     # Used only by `python -m app.seed`. Optional, so the app starts without them.
     seed_super_admin_email: str | None = None

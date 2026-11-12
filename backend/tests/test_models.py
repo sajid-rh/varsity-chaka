@@ -1,4 +1,4 @@
-"""Checks the migration-001 models without needing a running database."""
+"""Checks the models without needing a running database."""
 from decimal import Decimal
 
 from sqlalchemy.dialects import mysql
@@ -13,6 +13,14 @@ EXPECTED_TABLES = {
     "campus_destinations",
     "users",
     "email_verification_tokens",
+    "rider_profiles",
+    "reliability_stats",
+    "audit_logs",
+    "ride_offers",
+    "ride_requests",
+    "trips",
+    "blocks",
+    "contact_disclosures",
 }
 
 
@@ -27,7 +35,18 @@ def test_every_table_compiles_to_mysql_ddl():
 
 
 def test_tenant_owned_tables_have_university_id():
-    for name in ("university_settings", "campus_destinations", "users"):
+    for name in (
+        "university_settings",
+        "campus_destinations",
+        "users",
+        "rider_profiles",
+        "reliability_stats",
+        "ride_offers",
+        "ride_requests",
+        "trips",
+        "blocks",
+        "contact_disclosures",
+    ):
         assert "university_id" in Base.metadata.tables[name].c
 
 

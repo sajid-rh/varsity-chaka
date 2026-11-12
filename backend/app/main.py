@@ -2,6 +2,7 @@
 from fastapi import Depends, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -10,7 +11,8 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.core.database import get_db
 from app.core.errors import AppError
 from app.core.responses import fail, ok
-from app.routers import auth
+from app.core.templates import FRONTEND_DIR
+from app.routers import auth, blocks, fares, pages, riders, rides, routes, trips
 
 app = FastAPI(
     title="Varsity Chaka API",
@@ -19,6 +21,16 @@ app = FastAPI(
 )
 
 app.include_router(auth.router)
+app.include_router(riders.router)
+app.include_router(riders.admin_router)
+app.include_router(rides.router)
+app.include_router(trips.router)
+app.include_router(blocks.router)
+app.include_router(fares.router)
+app.include_router(fares.admin_router)
+app.include_router(routes.router)
+app.include_router(pages.router)
+app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR / "static")), name="static")
 
 
 @app.exception_handler(AppError)

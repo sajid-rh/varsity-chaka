@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · Varsity Chaka{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>Welcome, {{ user.full_name }}</h1>
+  <dl class="details">
+    <dt>Email</dt><dd>{{ user.email }}</dd>
+    <dt>Role</dt><dd><span class="badge">{{ user.role }}</span></dd>
+    <dt>University</dt><dd>{{ university.name if university else "Platform (no university)" }}</dd>
+  </dl>
+</section>
+<section class="card">
+  <h2>Coming next</h2>
+  <ul>
+    <li>Rider application and admin approval</li>
+    <li>Post a ride and find a match</li>
+    <li>Suggested cost sharing and arrival time range</li>
+  </ul>
+</section>
+{% endblock %}

@@ -60,3 +60,14 @@ class RegisterRequest(BaseModel):
         if self.password != self.confirm_password:
             raise ValueError("Passwords do not match")
         return self
+
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    # No strength rules here: login only compares against the stored hash
+    password: str = Field(min_length=1, max_length=128)
+
+    @field_validator("email")
+    @classmethod
+    def lowercase_email(cls, value: str) -> str:
+        return value.strip().lower()
