@@ -135,6 +135,17 @@ def create_trip_booking(
             match_explanation = m.explanation
             break
 
+    # Calculate advisory fare range
+    suggested_fare_min = None
+    suggested_fare_max = None
+    try:
+        from app.services import fare_service
+        fare_est = fare_service.calculate_fare_for_offer(db, passenger, offer.id)
+        suggested_fare_min = fare_est.suggested_min
+        suggested_fare_max = fare_est.suggested_max
+    except Exception:
+        pass
+
     trip = Trip(
         university_id=passenger.university_id,
         ride_offer_id=offer.id,
@@ -146,6 +157,8 @@ def create_trip_booking(
         active_offer_id=offer.id,  # Database-level unique capacity constraint
         match_score=match_score,
         match_explanation=match_explanation,
+        suggested_fare_min=suggested_fare_min,
+        suggested_fare_max=suggested_fare_max,
     )
 
     try:

@@ -14,5 +14,20 @@ services:
       - chaka_db_data:/var/lib/mysql
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
+  # Optional OSRM routing container for local road-network navigation.
+  # Run `docker compose --profile routing up -d` when regional extract is downloaded.
+  osrm:
+    image: osrm/osrm-backend:v5.27.1
+    container_name: varsity_chaka_osrm
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5000:5000"
+    volumes:
+      - osrm_data:/data
+    command: osrm-routed --algorithm mld /data/bangladesh-latest.osrm
+    profiles:
+      - routing
+
 volumes:
   chaka_db_data:
+  osrm_data:
