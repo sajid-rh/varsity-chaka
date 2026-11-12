@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Create account · Varsity Chaka{% endblock %}
+{% block content %}
+<section class="card narrow">
+  <h1>Create your account</h1>
+  <p class="muted">Use your university email. Your university is detected from it.</p>
+  {% if error %}<div class="alert alert-error" role="alert">{{ error }}</div>{% endif %}
+  <form method="post" action="/register" novalidate>
+    <label for="email">University email</label>
+    <input id="email" name="email" type="email" value="{{ form.email or '' }}" autocomplete="username" required>
+    {% if errors.email %}<p class="field-error">{{ errors.email }}</p>{% endif %}
+
+    <label for="full_name">Full name</label>
+    <input id="full_name" name="full_name" type="text" value="{{ form.full_name or '' }}" autocomplete="name" required>
+    {% if errors.full_name %}<p class="field-error">{{ errors.full_name }}</p>{% endif %}
+
+    <label for="phone">Phone (optional)</label>
+    <input id="phone" name="phone" type="tel" value="{{ form.phone or '' }}" autocomplete="tel">
+    {% if errors.phone %}<p class="field-error">{{ errors.phone }}</p>{% endif %}
+
+    <label for="student_id_no">Student ID (optional)</label>
+    <input id="student_id_no" name="student_id_no" type="text" value="{{ form.student_id_no or '' }}">
+    {% if errors.student_id_no %}<p class="field-error">{{ errors.student_id_no }}</p>{% endif %}
+
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" autocomplete="new-password" required>
+    <p class="hint">At least 8 characters with an uppercase letter, a lowercase letter and a digit.</p>
+    {% if errors.password %}<p class="field-error">{{ errors.password }}</p>{% endif %}
+
+    <label for="confirm_password">Confirm password</label>
+    <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" required>
+    {% if errors.confirm_password %}<p class="field-error">{{ errors.confirm_password }}</p>{% endif %}
+
+    <button type="submit" class="btn">Create account</button>
+  </form>
+  <p class="muted">Already registered? <a href="/login">Log in</a></p>
+</section>
+{% endblock %}

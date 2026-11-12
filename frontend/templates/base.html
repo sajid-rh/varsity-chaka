@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Varsity Chaka{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">Varsity Chaka</a>
+    {% if user %}
+    <form method="post" action="/logout" class="inline">
+      <span class="who">{{ user.full_name }}</span>
+      <button type="submit" class="btn btn-small btn-outline">Log out</button>
+    </form>
+    {% endif %}
+  </header>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="footer">
+    University-only student ride sharing prototype. Suggested cost sharing is advisory and voluntary.
+  </footer>
+</body>
+</html>

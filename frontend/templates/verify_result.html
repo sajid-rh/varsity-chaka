@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Email verification · Varsity Chaka{% endblock %}
+{% block content %}
+<section class="card narrow">
+  <h1>Email verification</h1>
+  {% if ok %}
+    <div class="alert alert-ok">Your email <strong>{{ email }}</strong> is verified.</div>
+    <a class="btn" href="/login">Log in</a>
+  {% else %}
+    <div class="alert alert-error" role="alert">{{ message }}</div>
+    <a class="btn btn-outline" href="/register">Back to sign up</a>
+  {% endif %}
+</section>
+{% endblock %}
