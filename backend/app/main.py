@@ -12,7 +12,7 @@ from app.core.database import get_db
 from app.core.errors import AppError
 from app.core.responses import fail, ok
 from app.core.templates import FRONTEND_DIR
-from app.routers import auth, pages
+from app.routers import auth, pages, riders
 
 app = FastAPI(
     title="Varsity Chaka API",
@@ -21,6 +21,8 @@ app = FastAPI(
 )
 
 app.include_router(auth.router)
+app.include_router(riders.router)
+app.include_router(riders.admin_router)
 app.include_router(pages.router)
 app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR / "static")), name="static")
 

@@ -1,4 +1,4 @@
-"""Checks the migration-001 models without needing a running database."""
+"""Checks the models without needing a running database."""
 from decimal import Decimal
 
 from sqlalchemy.dialects import mysql
@@ -13,6 +13,9 @@ EXPECTED_TABLES = {
     "campus_destinations",
     "users",
     "email_verification_tokens",
+    "rider_profiles",
+    "reliability_stats",
+    "audit_logs",
 }
 
 
